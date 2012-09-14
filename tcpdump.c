@@ -114,6 +114,8 @@ char *program_name;
 
 int32_t thiszone;		/* seconds offset from gmt to local time */
 
+int color_flag = 0;
+
 /* Forwards */
 static RETSIGTYPE cleanup(int);
 static RETSIGTYPE child_cleanup(int);
@@ -1067,6 +1069,9 @@ main(int argc, char **argv)
 		error("only -t, -tt, -ttt, -tttt and -ttttt are supported");
 		break;
 	}
+
+	if (getenv("TCPDUMP_WITH_COLORS"))
+		color_flag = 1;
 
 #ifdef WITH_CHROOT
 	/* if run as root, prepare for chrooting */

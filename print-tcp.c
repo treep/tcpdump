@@ -56,6 +56,8 @@ __RCSID("$NetBSD: print-tcp.c,v 1.8 2007/07/24 11:53:48 drochner Exp $");
 
 #include "nameser.h"
 
+#include "color-route.h"
+
 #ifdef HAVE_LIBCRYPTO
 #include <openssl/md5.h>
 #include <signature.h>
@@ -160,9 +162,10 @@ tcp_print(register const u_char *bp, register u_int length,
 #endif /*INET6*/
         ch = '\0';
         if (!TTEST(tp->th_dport)) {
-                (void)printf("%s > %s: [|tcp]",
-                             ipaddr_string(&ip->ip_src),
-                             ipaddr_string(&ip->ip_dst));
+		print_route(ipaddr_string(&ip->ip_src),
+			    ipaddr_string(&ip->ip_dst),
+			    color_flag ? RED : NONE);
+		(void)printf("[|tcp]");
                 return;
         }
 
@@ -210,27 +213,29 @@ tcp_print(register const u_char *bp, register u_int length,
 #ifdef INET6
         if (ip6) {
                 if (ip6->ip6_nxt == IPPROTO_TCP) {
-                        (void)printf("%s.%s > %s.%s: ",
-                                     ip6addr_string(&ip6->ip6_src),
+			print_route2(ip6addr_string(&ip6->ip6_src),
                                      tcpport_string(sport),
                                      ip6addr_string(&ip6->ip6_dst),
-                                     tcpport_string(dport));
+                                     tcpport_string(dport),
+				     color_flag ? RED : NONE);
                 } else {
-                        (void)printf("%s > %s: ",
-                                     tcpport_string(sport), tcpport_string(dport));
+			print_route(tcpport_string(sport),
+				    tcpport_string(dport),
+				    color_flag ? RED : NONE);
                 }
         } else
 #endif /*INET6*/
         {
                 if (ip->ip_p == IPPROTO_TCP) {
-                        (void)printf("%s.%s > %s.%s: ",
-                                     ipaddr_string(&ip->ip_src),
+			print_route2(ipaddr_string(&ip->ip_src),
                                      tcpport_string(sport),
                                      ipaddr_string(&ip->ip_dst),
-                                     tcpport_string(dport));
+                                     tcpport_string(dport),
+				     color_flag ? RED : NONE);
                 } else {
-                        (void)printf("%s > %s: ",
-                                     tcpport_string(sport), tcpport_string(dport));
+			print_route(tcpport_string(sport),
+				    tcpport_string(dport),
+				    color_flag ? RED : NONE);
                 }
         }
 

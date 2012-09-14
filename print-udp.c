@@ -56,6 +56,8 @@ static const char rcsid[] _U_ =
 #include "nfs.h"
 #include "bootp.h"
 
+#include "color-route.h"
+
 struct rtcphdr {
 	u_int16_t rh_flags;	/* T:2 P:1 CNT:5 PT:8 */
 	u_int16_t rh_len;	/* length of message (in words) */
@@ -313,21 +315,21 @@ udpipaddr_print(const struct ip *ip, int sport, int dport)
 	if (ip6) {
 		if (ip6->ip6_nxt == IPPROTO_UDP) {
 			if (sport == -1) {
-				(void)printf("%s > %s: ",
-					ip6addr_string(&ip6->ip6_src),
-					ip6addr_string(&ip6->ip6_dst));
+				print_route(ip6addr_string(&ip6->ip6_src),
+					    ip6addr_string(&ip6->ip6_dst),
+					    color_flag ? BLUE : NONE);
 			} else {
-				(void)printf("%s.%s > %s.%s: ",
-					ip6addr_string(&ip6->ip6_src),
-					udpport_string(sport),
-					ip6addr_string(&ip6->ip6_dst),
-					udpport_string(dport));
+				print_route2(ip6addr_string(&ip6->ip6_src),
+					     udpport_string(sport),
+					     ip6addr_string(&ip6->ip6_dst),
+					     udpport_string(dport),
+					     color_flag ? BLUE : NONE);
 			}
 		} else {
 			if (sport != -1) {
-				(void)printf("%s > %s: ",
-					udpport_string(sport),
-					udpport_string(dport));
+				print_route(udpport_string(sport),
+					    udpport_string(dport),
+					    color_flag ? BLUE : NONE);
 			}
 		}
 	} else
@@ -335,21 +337,21 @@ udpipaddr_print(const struct ip *ip, int sport, int dport)
 	{
 		if (ip->ip_p == IPPROTO_UDP) {
 			if (sport == -1) {
-				(void)printf("%s > %s: ",
-					ipaddr_string(&ip->ip_src),
-					ipaddr_string(&ip->ip_dst));
+				print_route(ipaddr_string(&ip->ip_src),
+					    ipaddr_string(&ip->ip_dst),
+					    color_flag ? BLUE : NONE);
 			} else {
-				(void)printf("%s.%s > %s.%s: ",
-					ipaddr_string(&ip->ip_src),
-					udpport_string(sport),
-					ipaddr_string(&ip->ip_dst),
-					udpport_string(dport));
+				print_route2(ipaddr_string(&ip->ip_src),
+					     udpport_string(sport),
+					     ipaddr_string(&ip->ip_dst),
+					     udpport_string(dport),
+					     color_flag ? BLUE : NONE);
 			}
 		} else {
 			if (sport != -1) {
-				(void)printf("%s > %s: ",
-					udpport_string(sport),
-					udpport_string(dport));
+				print_route(udpport_string(sport),
+					    udpport_string(dport),
+					    color_flag ? BLUE : NONE);
 			}
 		}
 	}
